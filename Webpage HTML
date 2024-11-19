@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable User Profile with Friends List</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; }
+        .profile { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .profile-cover { width: 100%; height: 200px; background-image: url('cover-image.jpg'); background-size: cover; background-position: center; position: relative; }
+        .profile-image { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #fff; position: absolute; bottom: -60px; left: 20px; }
+        .profile-details { padding: 20px; padding-top: 60px; text-align: left; }
+        .profile-details h1, .profile-details p { display: inline-block; }
+        .profile-actions { margin-top: 10px; }
+        .profile-actions button { padding: 8px 16px; border: none; background-color: #4267b2; color: #fff; border-radius: 5px; margin-right: 10px; cursor: pointer; }
+        .profile-content { display: flex; gap: 20px; padding: 20px; }
+        .sidebar { width: 250px; }
+        .sidebar h2 { font-size: 20px; margin-bottom: 10px; }
+        .friends-list { list-style: none; padding: 0; margin: 0; }
+        .friends-list li { padding: 8px 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; }
+        .posts { flex: 1; }
+        .post-box { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .post-box textarea { width: 100%; height: 60px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: none; margin-bottom: 10px; }
+        .post-box button { align-self: flex-end; padding: 8px 16px; border: none; background-color: #4267b2; color: #fff; border-radius: 5px; }
+        .post { background-color: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; position: relative; }
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+        .post-content { font-size: 16px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<!-- Profile Section -->
+<div class="profile">
+    <div class="profile-cover">
+        <img src="profile-image.jpg" alt="User Profile" class="profile-image">
+    </div>
+    <div class="profile-details">
+        <h1 id="profileName">John Doe</h1>
+        <input type="text" id="editNameInput" style="display: none;" />
+        <p id="profileBio">Software Engineer | Tech Enthusiast | Traveler</p>
+        <input type="text" id="editBioInput" style="display: none;" />
+        <div class="profile-actions">
+            <button id="editProfileButton" onclick="toggleEdit()">Edit Profile</button>
+            <button id="saveProfileButton" style="display: none;" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<main class="profile-content">
+    <!-- Sidebar with Friends List -->
+    <aside class="sidebar">
+        <h2>Available Friends</h2>
+        <ul class="friends-list" id="friendsList">
+            <!-- Friends will be dynamically added here -->
+        </ul>
+    </aside>
+
+    <!-- Posts Section -->
+    <section class="posts">
+        <div class="post-box">
+            <textarea id="newPostContent" placeholder="What's on your mind, John?"></textarea>
+            <button onclick="addPost()">Post</button>
+        </div>
+
+        <!-- Posts will be dynamically added here -->
+        <div id="postsContainer"></div>
+    </section>
+</main>
+
+<script>
+    // Fake friends data
+    const friends = [
+        "Alice Johnson",
+        "Bob Smith",
+        "Catherine Lee",
+        "David Brown",
+        "Ella Martinez",
+        "Franklin Wilson",
+        "Grace Adams",
+        "Hannah Garcia"
+    ];
+
+    // Function to render the friends list
+    function renderFriendsList() {
+        const friendsList = document.getElementById('friendsList');
+        friends.forEach(friend => {
+            const li = document.createElement('li');
+            li.textContent = friend;
+            friendsList.appendChild(li);
+        });
+    }
+
+    // Toggle Edit Profile
+    function toggleEdit() {
+        const nameDisplay = document.getElementById('profileName');
+        const bioDisplay = document.getElementById('profileBio');
+        const nameInput = document.getElementById('editNameInput');
+        const bioInput = document.getElementById('editBioInput');
+        const editButton = document.getElementById('editProfileButton');
+        const saveButton = document.getElementById('saveProfileButton');
+
+        // Switch to edit mode
+        nameInput.value = nameDisplay.textContent;
+        bioInput.value = bioDisplay.textContent;
+
+        nameDisplay.style.display = 'none';
+        bioDisplay.style.display = 'none';
+        nameInput.style.display = 'block';
+        bioInput.style.display = 'block';
+        editButton.style.display = 'none';
+        saveButton.style.display = 'inline-block';
+    }
+
+    // Save Profile Changes
+    function saveProfile() {
+        const nameDisplay = document.getElementById('profileName');
+        const bioDisplay = document.getElementById('profileBio');
+        const nameInput = document.getElementById('editNameInput');
+        const bioInput = document.getElementById('editBioInput');
+        const editButton = document.getElementById('editProfileButton');
+        const saveButton = document.getElementById('saveProfileButton');
+
+        // Save changes
+        nameDisplay.textContent = nameInput.value;
+        bioDisplay.textContent = bioInput.value;
+
+        nameDisplay.style.display = 'inline-block';
+        bioDisplay.style.display = 'inline-block';
+        nameInput.style.display = 'none';
+        bioInput.style.display = 'none';
+        editButton.style.display = 'inline-block';
+        saveButton.style.display = 'none';
+    }
+
+    // Adding new posts
+    function addPost() {
+        const postContent = document.getElementById('newPostContent').value;
+        const postsContainer = document.getElementById('postsContainer');
+
+        if (postContent.trim() === '') return;
+
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post';
+
+        postDiv.innerHTML = `
+        <div class="post-header">
+            <img src="profile-image.jpg" class="profile-img" alt="User">
+            <h3>John Doe</h3>
+        </div>
+        <div class="post-content">${postContent}</div>
+    `;
+        postsContainer.appendChild(postDiv);
+        document.getElementById('newPostContent').value = ''; // Clear textarea after posting
+    }
+
+    // Load friends list on page load
+    window.onload = function() {
+        renderFriendsList();
+    }
+</script>
+
+</body>
+</html>
